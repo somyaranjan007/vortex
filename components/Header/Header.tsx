@@ -5,10 +5,10 @@ import { MdMenu } from "react-icons/md";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { useWeb3Modal, useWalletInfo } from "@web3modal/wagmi/react";
-import { useAccount } from 'wagmi';
+import { useAppDispatch, useAppSelector, } from "@/lib/hooks";
+import { connectWallet } from "@/lib/features/walletConnect/walletConnectSlice";
 
-import Button from "../Button/Button";
+// import Button from "../Button/Button";
 import Sidebar from "./Sidebar";
 import Search from "./Search";
 
@@ -21,17 +21,24 @@ const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
 
-    const { open } = useWeb3Modal();
-    const { isConnected } = useAccount();
+    const dispatch = useAppDispatch();
+    // const wallet = useSelector(state => state.walletConnect);
 
-    console.log(isConnected);
- 
-    useEffect(() => {
-        if (isConnected && !isLoggedIn) {
-            router.push("/connect");
-        }
-    }, [isConnected])
-    
+    // console.log(wallet);
+
+    // const { open } = useWeb3Modal();
+    // const { disconnect } = useDisconnect();
+
+    // const { isConnected } = useAccount();
+
+    // console.log(isConnected);
+
+    // useEffect(() => {
+    //     if (isConnected && !isLoggedIn) {
+    //         router.push("/connect");
+    //     }
+    // }, [isConnected])
+
 
     return (
         <div className="flex justify-between items-center py-5 px-4 578:px-6 768:px-7 981:px-8">
@@ -59,7 +66,9 @@ const Header = () => {
             <div className="flex items-center">
                 <div className="hidden 1100:flex items-center justify-center">
                     {/* <Button content="Connect Wallet" /> */}
-                    <button onClick={() => open()} className="bg-white text-black text-[14px] font-semibold p-3 rounded-[8px]">Connect Wallet</button>
+                    <button onClick={() => { console.log("REDIRECT"); router.push("/connect")}} className="bg-white text-black text-[14px] font-semibold p-3 rounded-[8px]">Connect Wallet</button>
+
+                    <button onClick={() => { console.log("REDIRECT"); dispatch(connectWallet())}} className="bg-white text-black text-[14px] font-semibold p-3 rounded-[8px]">Connect MetaMask</button>
                 </div>
                 <RiShoppingBag4Line className="text-[23px] font-bold ml-5" />
                 <MdMenu className="text-[23px] font-bold ml-5 1100:hidden" onClick={() => {
@@ -67,7 +76,6 @@ const Header = () => {
                     setSidebarOpen(true)
                 }} />
             </div>
-
             <Sidebar state={sidebarOpen} setState={setSidebarOpen} />
             <Search state={searchOpen} setState={setSearchOpen} />
         </div>
