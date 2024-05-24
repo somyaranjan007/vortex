@@ -5,7 +5,12 @@ import React, { useState } from 'react';
 import { IoCheckbox, IoCheckboxOutline } from "react-icons/io5";
 
 
-const SignUpForm = () => {
+interface UserFormProps {
+    state: boolean,
+    setState: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const SignUpForm: React.FC<UserFormProps> = ({ state, setState }) => {
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
     const [termsAccepted, setTermsAccepted] = useState(false);
@@ -69,7 +74,7 @@ const SignUpForm = () => {
                     <button className={`w-full text-[14px] font-semibold p-3 rounded-[12px] ${displayName && email && termsAccepted ?  "bg-white text-black": "bg-[#2f3235] text-[#acadaf]"}`}>Finish sign-up</button>
                     {/* <button type="submit" className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md focus:outline-none">Finish sign-up</button> */}
                 </form>
-                <button onClick={() => console.log('Disconnect')} className="mt-4 w-full p-3 text-[14px] px-4 bg-transparent border border-[#2f3235] text-[#ffffff] font-semibold rounded-[12px] shadow-md focus:outline-none">Disconnect</button>
+                <button onClick={() => setState(false)} className="mt-4 w-full p-3 text-[14px] px-4 bg-transparent border border-[#2f3235] text-[#ffffff] font-semibold rounded-[12px] shadow-md focus:outline-none">Disconnect</button>
             </div>
         </div>
     );

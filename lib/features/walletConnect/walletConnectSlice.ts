@@ -19,6 +19,7 @@ const initialState: UserWalletState = {
     loading: false
 }
 
+
 export const connectWallet = createAsyncThunk("connect_with_metamask", async (_, { rejectWithValue }) => {
     try {
         if (typeof window.ethereum != "undefined") {
@@ -35,20 +36,19 @@ export const connectWallet = createAsyncThunk("connect_with_metamask", async (_,
                 blockExplorerUrls: [polygonZkEvmCardona.blockExplorers.default.url],
             };
 
+            await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [defaultChainParams],
+            })
+
             const userChainId = await window.ethereum.request({ method: "eth_chainId" });
 
             if (userChainId != defaultChainParams.chainId) {
-                const chain = await (window.ethereum.request({
-                    method: 'wallet_addEthereumChain',
-                    params: [defaultChainParams],
-                }).then(() => true).catch(() => false));
-
-                if (!chain) {
-                    return rejectWithValue("Failed to switch chain");
-                }
+                return rejectWithValue("Failed to switch chain");
             }
 
             await window.ethereum.request({ method: "eth_requestAccounts" });
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const address = await signer.getAddress();
@@ -73,9 +73,13 @@ export const walletConnectSlice = createSlice({
             state.provider = action.payload?.provider ?? null;
             state.signer = action.payload?.signer ?? null;
             state.address = action.payload?.address ?? null;
+            state.error = null;
         })
         builder.addCase(connectWallet.rejected, (state, action) => {
             state.loading = false;
+            state.provider = null;
+            state.signer = null;
+            state.address = null;
             state.error = action.error.message ?? "Wallet Connection Failed!";
         })
     }
